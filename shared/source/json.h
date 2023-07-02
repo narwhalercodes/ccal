@@ -1,3 +1,4 @@
+#ifndef CCAL_JSON_H
 #define CCAL_JSON_H
 
 #define JTypeSection 0      // JSection *   size = ((JSection*)ref)->count
@@ -31,3 +32,5 @@ char *JSerialiseSection(JSection *obj);
 void JFreeValue(JValue *obj);
 void JFreeField(JField *obj);
 void JFreeSection(JSection *obj);
+
+#endif

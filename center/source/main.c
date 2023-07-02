@@ -1,7 +1,6 @@
 #include <stdio.h>
-#ifndef CCAL_JSON_H
-    #include "../../shared/source/json.h"
-#endif
+#include <stdlib.h>
+#include "../../shared/source/json.h"
 
 int main(void)
 {

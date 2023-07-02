@@ -1,22 +1,32 @@
+#include <stdlib.h>
 #include <strings.h>
 #include <stdbool.h>
-#ifndef CCAL_JSON_H
-    #include "json.h"
-#endif
-#ifndef CCAL_MATH_H
-    #include "math.h"
-#endif
+#include "json.h"
+#include "math.h"
+#include "arraylist.h"
 
 JSection *JDeserialiseSection(int jLength, char *json)
 {
     JSection *res = calloc(1, sizeof(JSection));
     res->count = 0;
-    res->fields = calloc(8, sizeof(JField*));
-    res->fields[0] = calloc(1, sizeof(JField));
-    res->fields[0]->type = JTypeString;
-    res->fields[0]->size = 1;
-    res->fields[0]->ref = calloc(10, sizeof(char));
-    strcpy(res->fields[0]->ref, "test");
+    int capacity = 4;
+    res->fields = calloc(capacity, sizeof(JField *));
+    
+    // some test to see if my stuff works
+    for (int i = 0; i < 6; i++)
+    {
+        JField *field = calloc(1, sizeof(JField));
+        field->value = calloc(1, sizeof(JValue));
+        field->name = calloc(10, sizeof(char));
+        field->name[0] = 'a' + i;
+        field->value->type = JTypeString;
+        field->value->size = 1;
+        field->value->ref = calloc(10, sizeof(char));
+        strcpy(field->value->ref, "testx");
+        ((char *)(field->value->ref))[4] = '0' + i;
+        LAppendArray(&res->fields, &res->count, &capacity, sizeof(JField *), field);
+    }
+    
     return res;
 }
 

@@ -1,6 +1,8 @@
 #ifndef CCAL_ARRAYLIST_H
 #define CCAL_ARRAYLIST_H
 
+#include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 #include "math.h"
 

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 #include "arraylist.h"
 #include "math.h"
@@ -35,14 +36,15 @@ void *LRemoveLastArray(void **arr, int *count)
     {
         return (void *)0;
     }
-    void *lastValue = arr[count];
-    arr[count--] = (void *)0;
+    void *lastValue = arr[*count];
+    arr[*count] = (void *)0;
+    *count -= 1;
     return lastValue;
 }
 
 void LAppend(List *list, void *value)
 {
-    AppendArray(&list->elems, &list->count, &list->capacity, list->bytesPerElement, value);
+    LAppendArray(&list->elems, &list->count, &list->capacity, list->bytesPerElement, value);
 }
 
 void *LRemoveLast(List *list)

@@ -1,33 +1,42 @@
 #ifndef CCAL_JSON_H
 #define CCAL_JSON_H
 
-#define JTypeSection 0      // JSection *   size = ((JSection*)ref)->count
-#define JTypeString 1       // char *       size = strlen(ref)
-#define JTypeInt32 2        // int *        size = 1
-#define JTypeFloat64 3      // double *     size = 1
-#define JTypeBool 4         // bool *       size = 1
+// JSection *   size = ((JSection*)ref)->count
+#define JTypeSection 0
+
+// char *       size = strlen(ref)
+#define JTypeString 1
+
+// int *        size = 1
+#define JTypeInt32 2
+
+// double *     size = 1
+#define JTypeFloat64 3
+
+// bool *       size = 1
+#define JTypeBool 4
 
 typedef struct JValue {
-    int type,
-    int size,
-    void *ref
+    int type;
+    int size;
+    void *ref;
 } JValue;
 
 typedef struct JField {
-    char *name,
-    JValue *value
+    char *name;
+    JValue *value;
 } JField;
 
 typedef struct JSection {
-    int count,
-    **JField fields
+    int count;
+    JField **fields;
 } JSection;
 
-JSection *JDeserialiseSection(int jLength, char *json);
+JSection *JDeserialiseSection();//int jLength, char *json);
 
-char *JSerialiseValue(JValue *obj);
-char *JSerialiseField(JField *obj);
-char *JSerialiseSection(JSection *obj);
+char *JSerialiseValue(JValue *obj, int identLevel);
+char *JSerialiseField(JField *obj, int identLevel);
+char *JSerialiseSection(JSection *obj, int identLevel);
 
 void JFreeValue(JValue *obj);
 void JFreeField(JField *obj);

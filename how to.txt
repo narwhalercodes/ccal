@@ -1,5 +1,5 @@
 How to dev:
-1. Download an ied, preferably VSCode.
+1. Download an IDE, preferably VSCode.
 2. download tdm64-gcc-10.3.0-2.exe from https://jmeubank.github.io/tdm-gcc/download/ (on windows) and run gcc with VSCode terminal.
 
 How to set up new prod server:

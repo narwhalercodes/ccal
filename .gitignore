@@ -1,2 +1,4 @@
+./center/bin/*.*
 ./center/bin/*
+./peer/bin/*.*
 ./peer/bin/*

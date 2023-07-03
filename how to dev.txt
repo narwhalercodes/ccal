@@ -1,1 +1,0 @@
-download tdm64-gcc-10.3.0-2.exe from https://jmeubank.github.io/tdm-gcc/download/ (on windows) and run gcc with VSCode terminal.

@@ -1,0 +1,27 @@
+How to dev:
+1. Download an ied, preferably VSCode.
+2. download tdm64-gcc-10.3.0-2.exe from https://jmeubank.github.io/tdm-gcc/download/ (on windows) and run gcc with VSCode terminal.
+
+How to set up new prod server:
+1. Get AWS for free for a year.
+2. Create RC2 instance with UDP allowed for ports 7000-8000 from any origin.
+3. It will ask for a key-pair, download the .pem file since we will be using ssh.
+4. If you mess up the public ip not being set (like me!) you can reuse your security group and key-pair for a new instance.
+5. Open powershell and run the ssh-login (see how to deploy step 1).
+6. run the following commands:
+sudo dnf install git
+sudo dnf install gcc
+git config --global user.email "example@gmail.com"
+git config --global user.name "Example Exampleson"
+mkdir repos
+cd repos
+git clone "https://github.com/narwhalercodes/ccal.git"
+
+How to deploy:
+1. login with powershell to AWS with your secret .pem-file like follows:
+ssh -i "./../Desktop/instance1-2023.pem" ec2-user@13.51.198.67
+2. go to the project and pull
+cd /home/ec2-user/repos/ccal/
+git pull
+3. run the makefile
+4. run the executeable in ./center/bin/main.exe

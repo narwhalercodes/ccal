@@ -1,4 +1,4 @@
-./center/bin/*.*
-./center/bin/*
-./peer/bin/*.*
-./peer/bin/*
+center/bin/*.*
+center/bin/*
+peer/bin/*.*
+peer/bin/*

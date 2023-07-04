@@ -5,5 +5,12 @@
 
 int main(void)
 {
-    printf("Hello world.");
+    char json[] = "";
+    JSection *section = JDeserialiseSection(strlen(json), json);
+    printf("yo.\n");
+    printf("%d\n", section->count);
+    char *serialised = JSerialiseSection(section, 0);
+    printf("%s\n", serialised);
+    JFreeSection(section);
+    free(serialised);
 }

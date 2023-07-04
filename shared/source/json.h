@@ -32,7 +32,7 @@ typedef struct JSection {
     JField **fields;
 } JSection;
 
-JSection *JDeserialiseSection();//int jLength, char *json);
+JSection *JDeserialiseSection(int jLength, char *json);
 
 char *JSerialiseValue(JValue *obj, int identLevel);
 char *JSerialiseField(JField *obj, int identLevel);

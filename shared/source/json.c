@@ -6,11 +6,11 @@
 #include "math.h"
 #include "arraylist.h"
 
-JSection *JDeserialiseSection()//int jLength, char *json)
+JSection *JDeserialiseSection(int jLength, char *json)
 {
     JSection *res = calloc(1, sizeof(JSection));
     res->count = 0;
-    int capacity = 4;
+    int capacity = 6; //4;
     res->fields = calloc(capacity, sizeof(JField *));
     
     // some test to see if my stuff works
@@ -25,7 +25,9 @@ JSection *JDeserialiseSection()//int jLength, char *json)
         field->value->ref = calloc(10, sizeof(char));
         strcpy(field->value->ref, "testx");
         ((char *)(field->value->ref))[4] = '0' + i;
-        LAppendArray((void ***)&(res->fields), &res->count, &capacity, sizeof(JField *), field);
+        //LAppendArray((void ***)&(res->fields), &res->count, &capacity, sizeof(JField *), field);
+        res->fields[i] = field;
+        res->count += 1;
     }
     
     return res;

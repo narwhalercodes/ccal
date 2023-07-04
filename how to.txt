@@ -36,8 +36,9 @@ git checkout branch2
 git merge master (First tries to figure out how all of the changes to master vs branch2 should be merged, if there are conflicts then that means
                   the auto-merge failed, the affected files now contain alot of <'s, ='s and >'s for specific codeblocks of interest, pick one
                   save your file and continue.)
-git add --all
-git commit -m "merge" (or similar message)
+git add --all (only if manually merging files.)
+git commit -m "merge" (only if manually merging files.)
+git push
 
 If you by accident merge before pulling in master or stage the wrong changes you can allways redo your merge as long as you dont commit.
 Just run git stash --all. Then redo the above steps.

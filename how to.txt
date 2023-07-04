@@ -27,8 +27,11 @@ git stash clear (removes the "backups" of changes to the code removed by git sta
                  a very tidy person.)
 git checkout -b branch2 (creates a new branch "branch2" and switches to it, without having to worry about commiting first)
 git checkout master (switches to the specified branch, "HEAD" now points to master)
+git branch --delete branch2 (deletes the local branch, only do this if you have deleted it on remote, or it is a newly created local branch not
+                             yet pushed to remote.)
 
-Before completing a pull request on GitHub the normal procedure is to merge with master:
+Before completing a pull request on github.com (or Azure Devops site depending on which place you have remote origin) the normal procedure is
+to merge with master:
 
 git checkout master
 git pull
@@ -42,6 +45,13 @@ git push
 
 If you by accident merge before pulling in master or stage the wrong changes you can allways redo your merge as long as you dont commit.
 Just run git stash --all. Then redo the above steps.
+
+Once you are reviewed without issues (if needed), complete the pull request on github.com (or Azure Devops site depending on which place you
+have remote origin) once completed you can press the button that deletes the remote branch "branch2". Then preform the following locally:
+
+git checkout master
+git pull
+git branch --delete branch2
 
 
 How to set up new prod server

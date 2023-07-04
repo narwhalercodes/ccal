@@ -14,6 +14,8 @@ git config --global core.autocrlf false
 8. If you are new to git, these are some helpful commands:
 
 git add --all (stages your code without having to specify every file you changed.)
+git reset (unstages your code, personally i never used this one.)
+git restore (DONT, you are making a misstake. just use git stash --all!!!)
 git commit -m "some message" (commits staged files to your local repo)
 git push (sends your changes to the remote repo)
 git push -u origin HEAD (used for the first push to a locally created branch.)

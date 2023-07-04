@@ -1,0 +1,43 @@
+If you are new to git, these are some helpful commands:
+
+git add --all (stages your code without having to specify every file you changed.)
+git reset (unstages your code, personally i never used this one.)
+git restore . (DONT, you are making a misstake. just use git stash --all!!!)
+git commit -m "some message" (commits staged files to your local repo)
+git push (sends your changes to the remote repo)
+git push -u origin HEAD (used for the first push to a locally created branch.)
+git pull (updates your local repo to the latest changes on the remote repo for the current active branch, you dont need to use this if nobody
+          else is commiting to your branch unless you are working on multiple computers)
+git stash --all (disgards any uncommited changes, use when you dont intend to change the code or when you want to save a "backup" of your current
+                 progress but want to commit something else first, or just visit another branch)
+git stash list (lists all your "backups" by stashid)
+git stash apply 3 (reapplies the undone changes without staging them, in this case the stashid 3 is picked from the list.)
+git stash clear (removes the "backups" of changes to the code removed by git stash, only useful if you added large files by misstake or just are
+                 a very tidy person.)
+git checkout -b branch2 (creates a new branch "branch2" and switches to it, without having to worry about commiting first)
+git checkout master (switches to the specified branch, "HEAD" now points to master)
+git branch --delete branch2 (deletes the local branch, only do this if you have deleted it on remote, or it is a newly created local branch not
+                             yet pushed to remote.)
+
+Before completing a pull request on github.com (or Azure Devops site depending on which place you have remote origin) the normal procedure is
+to merge with master:
+
+git checkout master
+git pull
+git checkout branch2
+git merge master (First tries to figure out how all of the changes to master vs branch2 should be merged, if there are conflicts then that means
+                  the auto-merge failed, the affected files now contain alot of <'s, ='s and >'s for specific codeblocks of interest, pick one
+                  save your file and continue.)
+git add --all (only if manually merging files.)
+git commit -m "merge" (only if manually merging files.)
+git push
+
+If you by accident merge before pulling in master or stage the wrong changes you can allways redo your merge as long as you dont commit.
+Just run git stash --all. Then redo the above steps.
+
+Once you are reviewed without issues (if needed), complete the pull request on github.com (or Azure Devops site depending on which place you
+have remote origin) once completed you can press the button that deletes the remote branch "branch2". Then preform the following locally:
+
+git checkout master
+git pull
+git branch --delete branch2

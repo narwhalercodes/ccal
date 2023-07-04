@@ -1,0 +1,46 @@
+How to dev
+------------------------------
+1. Download an IDE, preferably VSCode.
+2. Install C/C++ Compile Run extension from danielpinto8zz6 (https://danielpinto.space) to your VSCode.
+3. download tdm64-gcc-10.3.0-2.exe from https://jmeubank.github.io/tdm-gcc/download/ (on windows) and run gcc with VSCode terminal.
+4. Clone the repo into perfered location
+git clone "https://github.com/narwhalercodes/ccal.git"
+5. Once you start editing your first file PLEASE select LF as line ending (bottom right in the VSCode footer).
+6. Before your first git add, please make sure you have set
+git config --global core.autocrlf false
+7. If I in the future am to accept help from other contributors, I'll probably not disable commits to master but that doesnt mean you are allowed
+   to do such disgusting things as not create a new branch and allow for the changes to belong to a PR, regardless if with need of review or not.
+
+8. If you are new to git, check out new to git.txt.
+
+
+How to set up new prod server
+------------------------------
+1. Get AWS for free for a year.
+2. Create RC2 instance with UDP allowed for ports 7000-8000 from any origin.
+3. It will ask for a key-pair, download the .pem file since we will be using ssh.
+4. If you mess up the public ip not being set (like me!) you can reuse your security group and key-pair for a new instance.
+5. Open powershell and run the ssh-login (see how to deploy step 1).
+6. run the following commands:
+sudo dnf install git
+sudo dnf install gcc
+git config --global user.email "example@gmail.com"
+git config --global user.name "Example Exampleson"
+mkdir repos
+cd repos
+git clone "https://github.com/narwhalercodes/ccal.git"
+
+
+How to deploy
+------------------------------
+1. Open powershell (as admin if you are to install ssh client).
+2. Check if you have ssh client installed with the following command. (it should say Name: OpenSSH.Client~~~~0.0.1.0 State : Installed)
+Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
+3. Idk what command you use if you dont have it. (sorry)
+4. login with powershell to AWS with your secret .pem-file like follows:
+ssh -i "../Desktop/instance1-2023.pem" ec2-user@13.51.198.67
+5. go to the project and pull
+cd /home/ec2-user/repos/ccal/
+git pull
+6. run the makefile
+7. run the executeable in ./center/bin/main.exe

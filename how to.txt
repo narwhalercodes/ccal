@@ -16,6 +16,7 @@ git config --global core.autocrlf false
 git add --all (stages your code without having to specify every file you changed.)
 git commit -m "some message" (commits staged files to your local repo)
 git push (sends your changes to the remote repo)
+git push -u origin HEAD (used for the first push to a locally created branch.)
 git pull (updates your local repo to the latest changes on the remote repo for the current active branch, you dont need to use this if nobody
           else is commiting to your branch unless you are working on multiple computers)
 git stash --all (disgards any uncommited changes, use when you dont intend to change the code or when you want to save a "backup" of your current

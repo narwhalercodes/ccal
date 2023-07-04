@@ -6,7 +6,7 @@ How to dev
 4. Clone the repo into perfered location
 git clone "https://github.com/narwhalercodes/ccal.git"
 5. Once you start editing your first file PLEASE select LF as line ending (bottom right in the VSCode footer).
-6. Before your first git add, please make sure you have set
+6. Before your first git add, please make sure you have set the following if you are working on windows!
 git config --global core.autocrlf false
 7. If I in the future am to accept help from other contributors, I'll probably not disable commits to master but that doesnt mean you are allowed
    to do such disgusting things as not create a new branch and allow for the changes to belong to a PR, regardless if with need of review or not.

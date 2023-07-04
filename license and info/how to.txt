@@ -17,7 +17,7 @@ git config --global core.autocrlf false
 How to set up new prod server
 ------------------------------
 1. Get AWS for free for a year.
-2. Create RC2 instance with UDP allowed for ports 7000-8000 from any origin.
+2. Create RC2 instance with UDP allowed for ports 24200-24299 from any origin.
 3. It will ask for a key-pair, download the .pem file since we will be using ssh.
 4. If you mess up the public ip not being set (like me!) you can reuse your security group and key-pair for a new instance.
 5. Open powershell and run the ssh-login (see how to deploy step 1).

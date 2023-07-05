@@ -10,6 +10,7 @@ int main(void)
     printf("yo.\n");
     printf("%d\n", section->count);
     char *serialised = JSerialiseSection(section, 0);
+    printf("strlen(serialised) = %d\n", (int)strlen(serialised));
     printf("%s\n", serialised);
     JFreeSection(section);
     free(serialised);

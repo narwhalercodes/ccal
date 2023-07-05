@@ -177,7 +177,7 @@ char *JSerialiseField(JField *obj, int identLevel)
     int jLength = identLevel*4 + 1 + len1 + 3 + len2;
     char *res = calloc(jLength + 1, sizeof(char));
     for (int i = 0; i < identLevel; i++)
-        strcpy(res + i, "    ");
+        strcpy(res + i*4, "    ");
     res[identLevel*4] = '"';
     strcpy(res + identLevel*4 + 1, obj->name); // TODO: escape
     strcpy(res + identLevel*4 + 1 + len1, "\": ");
@@ -236,6 +236,7 @@ char *JSerialiseSection(JSection *obj, int identLevel)
         free(serialisedFields[i]);
     }
     
+    //printf("ident=%d jLength=%d\n", identLevel, jLength);
     //printf("SECTION END\n");
     return res;
 }

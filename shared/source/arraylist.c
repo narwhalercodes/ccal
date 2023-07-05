@@ -17,16 +17,16 @@ void LAppendArray(void ***arr, int *count, int *capacity, size_t bytesPerElement
         }
         void **newArr = calloc(newCapacity, bytesPerElement);
         memcpy(newArr, *arr, bytesPerElement * (*count));
-        memcpy(((char *)newArr) + bytesPerElement * (*count), value, bytesPerElement);
+        memcpy(((char *)newArr) + bytesPerElement * (*count), (char *)&value, bytesPerElement);
         free(*arr);
         *arr = newArr;
-        count++;
+        *count = *count + 1;
         *capacity = newCapacity;
     }
     else
     {
-        memcpy(((char *)*arr) + bytesPerElement * (*count), value, bytesPerElement);
-        count++;
+        memcpy(((char *)*arr) + bytesPerElement * (*count), (char *)&value, bytesPerElement);
+        *count = *count + 1;
     }
 }
 
@@ -44,12 +44,12 @@ void *LRemoveLastArray(void **arr, int *count)
 
 void LAppend(List *list, void *value)
 {
-    LAppendArray(&list->elems, &list->count, &list->capacity, list->bytesPerElement, value);
+    LAppendArray(&(list->elems), &(list->count), &(list->capacity), list->bytesPerElement, value);
 }
 
 void *LRemoveLast(List *list)
 {
-    return LRemoveLastArray(list->elems, &list->count);
+    return LRemoveLastArray(list->elems, &(list->count));
 }
 
 bool LAny(List *list)

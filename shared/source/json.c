@@ -10,7 +10,7 @@ JSection *JDeserialiseSection(int jLength, char *json)
 {
     JSection *res = calloc(1, sizeof(JSection));
     res->count = 0;
-    int capacity = 6; //4;
+    int capacity = 4;
     res->fields = calloc(capacity, sizeof(JField *));
     
     // some test to see if my stuff works
@@ -25,9 +25,7 @@ JSection *JDeserialiseSection(int jLength, char *json)
         field->value->ref = calloc(10, sizeof(char));
         strcpy(field->value->ref, "testx");
         ((char *)(field->value->ref))[4] = '0' + i;
-        //LAppendArray((void ***)&(res->fields), &res->count, &capacity, sizeof(JField *), field);
-        res->fields[i] = field;
-        res->count += 1;
+        LAppendArray((void ***)(&(res->fields)), &(res->count), &capacity, sizeof(JField *), field);
     }
     
     return res;
@@ -35,47 +33,66 @@ JSection *JDeserialiseSection(int jLength, char *json)
 
 char *JSerialiseValue(JValue *obj, int identLevel)
 {
+    if (identLevel > 64)
+    {
+        printf("EXCEEDED 64 NESTINGS\n");
+        return NULL;
+    }
+    //printf("VALUE BEGIN %d, %d, %d\n", obj->type, obj->size, (int)obj->ref);
     if (obj->type == JTypeSection)
     {
-        return JSerialiseSection(obj->ref, identLevel + 1);
+        char *res = JSerialiseSection(obj->ref, identLevel + 1);
+        //printf("VALUE END\n");
+        return res;
     }
     else if (obj->type == JTypeString)
     {
-        int jLength = 1 + strlen(obj->ref) + 1; // TODO: custom count length for escaping chars
+        int len = strlen(obj->ref);
+        int jLength = 1 + len + 1; // TODO: custom count length for escaping chars
         char *res = calloc(jLength + 1, sizeof(char));
         res[0] = '"';
         strcpy(res + 1, obj->ref); // TODO: escape
-        res[jLength] = '"';
+        res[1 + len] = '"';
+        //printf("VALUE END\n");
         return res;
     }
     else if (obj->type == JTypeInt32)
     {
         char *res = calloc(13, sizeof(char));
         sprintf(res, "%d", *(int*)(obj->ref));
+        //printf("VALUE END\n");
         return res;
     }
     else if (obj->type == JTypeFloat64)
     {
         char *res = calloc(30, sizeof(char));
         sprintf(res, "%lf", *(double*)(obj->ref));
+        //printf("VALUE END\n");
         return res;
     }
     else if (obj->type == JTypeBool)
     {
         char *res = calloc(6, sizeof(char));
         strcpy(res, *(bool*)(obj->ref) ? "true" : "false");
+        //printf("VALUE END\n");
         return res;
     }
     else
     {
         printf("OH NO!");
-        exit(-1);
+        return NULL;
     }
 }
 
 char *JSerialiseField(JField *obj, int identLevel)
 {
+    //printf("FIELD BEGIN %d\n", (int)obj->name);
+    //printf("%s\n", obj->name);
+    //printf("%d\n", (int)obj->value);
+
     char *serialisedValue = JSerialiseValue(obj->value, identLevel);
+    if (serialisedValue == NULL)
+        return NULL;
     int len1 = strlen(obj->name); // TODO: custom count length for escaping chars
     int len2 = strlen(serialisedValue);
     int jLength = identLevel*4 + 1 + len1 + 3 + len2;
@@ -86,12 +103,20 @@ char *JSerialiseField(JField *obj, int identLevel)
     strcpy(res + identLevel*4 + 1, obj->name); // TODO: escape
     strcpy(res + identLevel*4 + 1 + len1, "\": ");
     strcpy(res + identLevel*4 + 1 + len1 + 3, serialisedValue);
+    //printf("FIELD END\n");
     free(serialisedValue);
     return res;
 }
 
 char *JSerialiseSection(JSection *obj, int identLevel)
 {
+    //printf("SECTION BEGIN %d", obj->count);
+    //for (int i = 0; i < obj->count; i++)
+    //{
+    //    printf(" %d", (int)obj->fields[i]);
+    //}
+    //printf("\n");
+
     int nrFields = obj->count;
     int fieldLengthsSum = 0;
     int fieldLengths[nrFields];
@@ -99,6 +124,8 @@ char *JSerialiseSection(JSection *obj, int identLevel)
     for (int i = 0; i < nrFields; i++)
     {
         serialisedFields[i] = JSerialiseField(obj->fields[i], identLevel);
+        if (serialisedFields[i] == NULL)
+            return NULL;
         fieldLengths[i] = strlen(serialisedFields[i]);
         fieldLengthsSum += fieldLengths[i];
     }
@@ -134,6 +161,8 @@ char *JSerialiseSection(JSection *obj, int identLevel)
     {
         free(serialisedFields[i]);
     }
+    
+    //printf("SECTION END\n");
     return res;
 }
 

@@ -14,6 +14,28 @@ JSection *JDeserialiseSection(int jLength, char *json)
     res->fields = calloc(capacity, sizeof(JField *));
     
     // some test to see if my stuff works
+    // this generates the following structure:
+    //
+    // {
+    //     "a": "test0",
+    //     "b": true,
+    //     "c": "test2",
+    //     "d": "test3",
+    //     "nesty mac besty": {
+    //         "a": "TEST_0",
+    //         "b": "TEST_1",
+    //         "c": "TEST_2",
+    //         "d": "TEST_3",
+    //         "e": "TEST_4"
+    //     },
+    //     "f": "test5",
+    //     "_0": -0.225000,
+    //     "_1": 1.575000,
+    //     "_2": 11,
+    //     "_3": 39,
+    //     "_4": 111
+    // }
+    //
     for (int i = 0; i < 6; i++)
     {
         JField *field = calloc(1, sizeof(JField));
@@ -27,6 +49,63 @@ JSection *JDeserialiseSection(int jLength, char *json)
         ((char *)(field->value->ref))[4] = '0' + i;
         LAppendArray((void ***)(&(res->fields)), &(res->count), &capacity, sizeof(JField *), field);
     }
+    for (int i = 0; i < 2; i++)
+    {
+        JField *field = calloc(1, sizeof(JField));
+        field->value = calloc(1, sizeof(JValue));
+        field->name = calloc(10, sizeof(char));
+        field->name[0] = '_';
+        field->name[1] = '0' + i;
+        field->value->type = JTypeFloat64;
+        field->value->size = 1;
+        field->value->ref = calloc(1, sizeof(double));
+        *(double *)(field->value->ref) = 1.5 * (i - 0.3) * (i + 0.5);
+        LAppendArray((void ***)(&(res->fields)), &(res->count), &capacity, sizeof(JField *), field);
+    }
+    for (int i = 2; i < 5; i++)
+    {
+        JField *field = calloc(1, sizeof(JField));
+        field->value = calloc(1, sizeof(JValue));
+        field->name = calloc(10, sizeof(char));
+        field->name[0] = '_';
+        field->name[1] = '0' + i;
+        field->value->type = JTypeInt32;
+        field->value->size = 1;
+        field->value->ref = calloc(1, sizeof(int));
+        *(int *)(field->value->ref) = (1 << i)*(2*i - 1) - 1;
+        LAppendArray((void ***)(&(res->fields)), &(res->count), &capacity, sizeof(JField *), field);
+    }
+
+    free(res->fields[1]->value->ref);
+    res->fields[1]->value->type = JTypeBool;
+    res->fields[1]->value->size = 1;
+    res->fields[1]->value->ref = calloc(1, sizeof(bool));
+    *(bool *)(res->fields[1]->value->ref) = true;
+
+    JFreeValue(res->fields[4]->value);
+    res->fields[4]->value = calloc(1, sizeof(JValue));
+    res->fields[4]->name = calloc(40, sizeof(char));
+    strcpy(res->fields[4]->name, "nesty mac besty");
+    res->fields[4]->value->type = JTypeSection;
+    int capacity2 = 1;
+    res->fields[4]->value->ref = calloc(1, sizeof(JSection));
+    JSection *innerSection = res->fields[4]->value->ref;
+    innerSection->fields = calloc(capacity2, sizeof(JField *));
+    innerSection->count = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        JField *field = calloc(1, sizeof(JField));
+        field->value = calloc(1, sizeof(JValue));
+        field->name = calloc(10, sizeof(char));
+        field->name[0] = 'a' + i;
+        field->value->type = JTypeString;
+        field->value->size = 1;
+        field->value->ref = calloc(10, sizeof(char));
+        strcpy(field->value->ref, "TEST_x");
+        ((char *)(field->value->ref))[5] = '0' + i;
+        LAppendArray((void ***)(&(innerSection->fields)), &(innerSection->count), &capacity2, sizeof(JField *), field);
+    }
+    res->fields[4]->value->size = innerSection->count;
     
     return res;
 }
@@ -41,7 +120,7 @@ char *JSerialiseValue(JValue *obj, int identLevel)
     //printf("VALUE BEGIN %d, %d, %d\n", obj->type, obj->size, (int)obj->ref);
     if (obj->type == JTypeSection)
     {
-        char *res = JSerialiseSection(obj->ref, identLevel + 1);
+        char *res = JSerialiseSection(obj->ref, identLevel);
         //printf("VALUE END\n");
         return res;
     }
@@ -123,25 +202,20 @@ char *JSerialiseSection(JSection *obj, int identLevel)
     char *serialisedFields[nrFields];
     for (int i = 0; i < nrFields; i++)
     {
-        serialisedFields[i] = JSerialiseField(obj->fields[i], identLevel);
+        serialisedFields[i] = JSerialiseField(obj->fields[i], identLevel + 1);
         if (serialisedFields[i] == NULL)
             return NULL;
         fieldLengths[i] = strlen(serialisedFields[i]);
         fieldLengthsSum += fieldLengths[i];
     }
-    //            fields            "\n" and ","                      identation for fields         identation behind "}"   "{" and "}"
-    int jLength = fieldLengthsSum + (nrFields > 0 ? nrFields*2 : 1) + nrFields*(identLevel + 1)*4 + identLevel*4 +          2;
+    //            fields            "\n" and ","                     identation behind "}"   "{" and "}"
+    int jLength = fieldLengthsSum + (nrFields > 0 ? nrFields*2 : 1) + identLevel*4 +          2;
     char *res = calloc(jLength + 1, sizeof(char));
     char *resptr = res;
     *(resptr++) = '{';
     *(resptr++) = '\n';
     for (int i = 0; i < nrFields; i++)
     {
-        for (int k = 0; k < identLevel + 1; k++)
-        {
-            strcpy(resptr, "    ");
-            resptr += 4;
-        }
         strcpy(resptr, serialisedFields[i]);
         resptr += fieldLengths[i];
         if (i != nrFields - 1)

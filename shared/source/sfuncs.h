@@ -27,11 +27,13 @@ typedef struct SPointer {
 // A chunk provider func should allways set the bits to 0 with calloc().
 typedef void (*ChunkProviderFunc)(int, SContainer *);
 
-int SReadChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPointer *outputSPtr,
+int SReadChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPointer outputSPtr,
                ChunkProviderFunc requestChunk, int maxWrittenSize, bool haltOnNullChar, int *writtenLength);
 
 /*int SReadEscapedChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPointer *outputSPtr,
                       ChunkProviderFunc requestChunk, int maxReadSize, int maxWrittenSize, bool haltOnNullChar,
                       int *resultLength, int *resultUnescapedLength);*/
+
+void SContainerFree(SContainer *sc);
 
 #endif

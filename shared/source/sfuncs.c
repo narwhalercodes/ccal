@@ -26,7 +26,7 @@
 // 
 // Result value (ignore this by pointing to NULL)
 // writtenLength <- the number of chars written (excluding terminating null-char).
-int SReadChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPointer *outputSPtr,
+int SReadChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPointer outputSPtr,
                ChunkProviderFunc requestChunk, int maxWrittenSize, bool haltOnNullChar, int *writtenLength)
 {
     int wl;
@@ -34,7 +34,7 @@ int SReadChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPo
         writtenLength = &wl;
     *writtenLength = 0;
 
-    if (outputS->chunks[outputSPtr->chunkInd] == NULL && outputSPtr->ind != 0)
+    if (outputS->chunks[outputSPtr.chunkInd] == NULL && outputSPtr.ind != 0)
     {
         return -5;
     }
@@ -45,12 +45,12 @@ int SReadChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPo
     int chSize = inputS->chunkSize;
     int chSize2 = outputS->chunkSize;
 
-    int chunk = inputSPtr->chunkInd;
-    int chr = inputSPtr->ind;
+    int chunk = inputSPtr.chunkInd;
+    int chr = inputSPtr.ind;
     char *chunkVec = chunk2DVec[chunk];
 
-    int chunk2 = outputSPtr->chunkInd;
-    int chr2 = outputSPtr->ind;
+    int chunk2 = outputSPtr.chunkInd;
+    int chr2 = outputSPtr.ind;
     char *chunkVec2 = chunk2DVec2[chunk2];
 
     // "last" means excluding
@@ -255,7 +255,7 @@ int SReadChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPo
 // resultUnescapedLength <- number of read chars to produce the written chars (excluding terminating null-char)
 //                          (if an escape is midway the escape is not written and the resultUnescapedLength is set
 //                          to the value as if not read).
-/*int SReadEscapedChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPointer *outputSPtr,
+/*int SReadEscapedChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPointer outputSPtr,
                       ChunkProviderFunc requestChunk, int maxReadSize, int maxWrittenSize, bool haltOnNullChar,
                       int *resultLength, int *resultUnescapedLength)
 {
@@ -274,3 +274,17 @@ int SReadChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPo
         // TODO
     }
 }*/
+
+void SContainerFree(SContainer *sc)
+{
+    int size = sc->size;
+    for (int i = 0; i < size; i++)
+    {
+        if (sc->chunks[i] == NULL)
+        {
+            break;
+        }
+        free(sc->chunks[i]);
+    }
+    free(sc);
+}

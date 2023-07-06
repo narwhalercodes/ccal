@@ -68,7 +68,7 @@ void test1()
     SContainer *s1 = SContainerFromString(8, 10, "yo");
     SContainer *s2 = SContainerFromString(8, 10, "he");
     int res;
-    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 0, 2 }, NULL, 20, false, &res);
+    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 0, 2 }, NULL, NULL, 20, false, &res);
     char **c2 = s2->chunks;
     printf("%d, %d, %d, %c%c%c%c 0x%02X\n", r, res, s2->length, c2[0][0], c2[0][1], c2[0][2], c2[0][3], (int)c2[0][4]);
     SContainerFree(s1);
@@ -80,7 +80,7 @@ void test2()
     SContainer *s1 = SContainerFromString(8, 10, " mighty! welcome to the crew.");
     SContainer *s2 = SContainerFromString(8, 10, "hello there");
     int res;
-    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, 20, false, &res);
+    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, NULL, 20, false, &res);
     char **c2 = s2->chunks;
     printf("%d, %d, %d, %s%s%s%s %d\n", r, res, s2->length, c2[0], c2[1], c2[2], c2[3], c2[4] == NULL);
     SContainerFree(s1);
@@ -92,7 +92,7 @@ void test3()
     SContainer *s1 = SContainerFromString(8, 10, " mighty! welcome to the crew.");
     SContainer *s2 = SContainerFromString(8, 10, "hello there");
     int res;
-    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, 50, false, &res);
+    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, NULL, 50, false, &res);
     char **c2 = s2->chunks;
     printf("%d, %d, %d, %s%s%s%s%s\n", r, res, s2->length, c2[0], c2[1], c2[2], c2[3], c2[4]);
     SContainerFree(s1);
@@ -104,7 +104,7 @@ void test4()
     SContainer *s1 = SContainerFromString(8, 10, " mighty! welcome to the crew.");
     SContainer *s2 = SContainerFromString(8, 10, "hello there");
     int res;
-    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, -1, false, &res);
+    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, NULL, -1, false, &res);
     char **c2 = s2->chunks;
     printf("%d, %d, %d, %s%s%s%s%s\n", r, res, s2->length, c2[0], c2[1], c2[2], c2[3], c2[4]);
     SContainerFree(s1);
@@ -116,7 +116,7 @@ void test5()
     SContainer *s1 = SContainerFromString(8, 10, " mighty! welcome to the crew.");
     SContainer *s2 = SContainerFromString(8, 10, "hello there");
     int res;
-    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, 29, false, &res);
+    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, NULL, 29, false, &res);
     char **c2 = s2->chunks;
     printf("%d, %d, %d, %s%s%s%s%s\n", r, res, s2->length, c2[0], c2[1], c2[2], c2[3], c2[4]);
     SContainerFree(s1);
@@ -129,7 +129,7 @@ void test6()
     SContainer *s2 = SContainerFromString(8, 10, "hello there");
     s1->chunks[3][2] = '\0';
     int res;
-    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, -1, true, &res);
+    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 1 }, NULL, NULL, -1, true, &res);
     char **c2 = s2->chunks;
     printf("%d, %d, %d, %s%s%s%s%s\n", r, res, s2->length, c2[0], c2[1], c2[2], c2[3], c2[4]);
     SContainerFree(s1);
@@ -141,7 +141,7 @@ void test7()
     SContainer *s1 = SContainerFromString(8, 10, " mighty! welcome to the crew.");
     SContainer *s2 = SContainerFromString(5, 5, "hello there");
     int res;
-    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 4 }, NULL, -1, false, &res);
+    int r = SReadChars(s1, (SPointer){ 0, 0 }, s2, (SPointer){ 1, 4 }, NULL, NULL, -1, false, &res);
     char **c2 = s2->chunks;
     printf("%d, %d, %d, %s%s%s%s%s\n", r, res, s2->length, c2[0], c2[1], c2[2], c2[3], c2[4]);
     SContainerFree(s1);

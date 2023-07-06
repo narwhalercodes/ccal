@@ -27,7 +27,8 @@
 // Result value (ignore this by pointing to NULL)
 // writtenLength <- the number of chars written (excluding terminating null-char).
 int SReadChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPointer outputSPtr,
-               ChunkProviderFunc requestChunk, int maxWrittenSize, bool haltOnNullChar, int *writtenLength)
+               ChunkProviderFunc requestChunk, void *requestChunkArgs, int maxWrittenSize, bool haltOnNullChar,
+               int *writtenLength)
 {
     int wl;
     if (writtenLength == NULL)
@@ -82,7 +83,7 @@ int SReadChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPoi
         {
             return -4;
         }
-        requestChunk(chunk, inputS);
+        requestChunk(chunk, inputS, requestChunkArgs);
         chunkVec = chunk2DVec[chunk];
         if (chunkVec == NULL)
         {
@@ -124,7 +125,7 @@ int SReadChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPoi
                     outputS->length = firstOutput + i;
                     return -4;
                 }
-                requestChunk(chunk, inputS);
+                requestChunk(chunk, inputS, requestChunkArgs);
                 chunkVec = chunk2DVec[chunk];
                 if (chunkVec == NULL)
                 {
@@ -256,7 +257,7 @@ int SReadChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPoi
 //                          (if an escape is midway the escape is not written and the resultUnescapedLength is set
 //                          to the value as if not read).
 /*int SReadEscapedChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPointer outputSPtr,
-                      ChunkProviderFunc requestChunk, int maxReadSize, int maxWrittenSize, bool haltOnNullChar,
+                      ChunkProviderFunc requestChunk, void *requestChunkArgs, int maxReadSize, int maxWrittenSize, bool haltOnNullChar,
                       int *resultLength, int *resultUnescapedLength)
 {
     quotesPtr = insideQuotesPtr;

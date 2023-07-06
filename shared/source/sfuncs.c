@@ -29,6 +29,9 @@
 int SReadChars(SContainer *inputS, SPointer *inputSPtr, SContainer *outputS, SPointer *outputSPtr,
                ChunkProviderFunc requestChunk, int maxWrittenSize, bool haltOnNullChar, int *writtenLength)
 {
+    int wl;
+    if (writtenLength == NULL)
+        writtenLength = &wl;
     *writtenLength = 0;
 
     if (outputS->chunks[outputSPtr->chunkInd] == NULL && outputSPtr->ind != 0)

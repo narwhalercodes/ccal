@@ -254,8 +254,18 @@ int SReadChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPoi
 // Result values (ignore these by pointing to NULL)
 // resultLength <- number of written chars (excluding terminating null-char).
 // resultUnescapedLength <- number of read chars to produce the written chars (excluding terminating null-char)
-//                          (if an escape is midway the escape is not written and the resultUnescapedLength is set
-//                          to the value as if not read).
+// 
+// Notice of mid-way escapes:
+// If an escape is mid-way the escape is not written and the result values are reflecting the unread escape length.
+// 
+// Notice of termination with requestChunk:
+// You may set the length of inputS to be greater than the total bytes of chunks allocated, that way requestChunk will be called again.
+// You may NOT set the length of inputS to be greater than the total bytes of a fully allocated SContainer.
+// This leads to the strategy of avoiding to supply the last chunk in a SContainer as the function may think the string is finished,
+// leading to potential flaws, currently the list of potential flaws:
+// 1. An escaped \[0-7]{1,3} value may be treated as fully read since it can contain a variable amount of octlet characters.
+// 2. An escaped \x[0-9A-F]{1,6} value may be treated as fully read since it can contain a variable amount of hexadecimal characters.
+// 
 /*int SReadEscapedChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPointer outputSPtr,
                       ChunkProviderFunc requestChunk, void *requestChunkArgs, int maxReadSize, int maxWrittenSize, bool haltOnNullChar,
                       int *resultLength, int *resultUnescapedLength)

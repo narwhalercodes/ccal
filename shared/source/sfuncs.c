@@ -264,7 +264,9 @@ int SReadChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPoi
 // This leads to the strategy of avoiding to supply the last chunk in a SContainer as the function may think the string is finished,
 // leading to potential flaws, currently the list of potential flaws:
 // 1. An escaped \[0-7]{1,3} value may be treated as fully read since it can contain a variable amount of octlet characters.
+// (Note this can only happen with haltOnNullChar since otherwise '"' will imply the escape is finished).
 // 2. An escaped \x[0-9A-F]{1,6} value may be treated as fully read since it can contain a variable amount of hexadecimal characters.
+// (Note this can only happen with haltOnNullChar since otherwise '"' will imply the escape is finished).
 // 
 /*int SReadEscapedChars(SContainer *inputS, SPointer inputSPtr, SContainer *outputS, SPointer outputSPtr,
                       ChunkProviderFunc requestChunk, void *requestChunkArgs, int maxReadSize, int maxWrittenSize, bool haltOnNullChar,

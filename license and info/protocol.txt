@@ -202,23 +202,74 @@ the attacking middleman. The real client will try at a later time to estcon.
 
 1.3. authinit
 
-[IDK WHAT THIS IS GONNA BE]
+authinit (legitimate)
+                        sender
+            k4[k1]
+k4[k1]
+            uid1+un1[k1,k4]
+                        uid1+un1[k1,k4]
+            y+uid1+un1[k1,k4]
+y+uid1+un1[k1,k4]
+            y[k1,k4]
+            y[k1,k4]
+                        y[k1,k4]
+                        y[k1,k4]
 
+authinit (legitimate with packet loss)
+                        sender
+            k4[k1]
+k4[k1]
+            uid1+un1[k1,k4]
+                        uid1+un1[k1,k4]
+            y+uid1+un1[k1,k4]
+nothing
+            uid1+un1[k1,k4]
+                        uid1+un1[k1,k4]
+            y+uid1+un1[k1,k4]
+y+uid1+un1[k1,k4]
+            y[k1,k4]
+            y[k1,k4]
+                        y[k1,k4]
+                        y[k1,k4]
+
+authinit (legitimate failure)
+                        sender
+            k4[k1]
+k4[k1]
+            uid1+un1[k1,k4]
+                        uid1+un1[k1,k4]
+            w+uid1[k1,k4]
+w+uid1[k1,k4]
+
+w means the server did not like the arguments given.
+k4 is the server generated key given for this specific client (will not change unless the server ).
+uid1 
 The authinit step is only done for clients who have not previously established estcon (aka first-timers).
 After the authinit-step the client will know the key p1 produced by the server, and the server will know this.
-The purpose of this step is to establish a more secure connection than a single-sided encryption in case one key
-is less random.
+The purpose of this step two things: 1. To establish a more secure connection than a single-sided encryption
+in case one key is less random. 2. To configure an username for the client, un1 (allowed to collide with other
+clients) along with a unique identifier, uid1 (not to be changed unless (1.4.) connect results in failure due
+to the uid1 being cleared from the table).
 
 1.4. connect
 
-[IDK WHAT THIS IS GONNA BE]
+connect (legitimate)
+sender
+            uid1[k1,k4]
+                        uid1[k1,k4]
+            y+uid1+a+b[k1,k4]
+y+uid1+a+b[k1,k4]
 
+a is a handshake identifier (not unique) for who wants to reconnect, it can only collide if someone else has
+taken this identity due to too long network outage on client but also if the server restarted.
+b is a send/recive identifier to easily look up who the message comes from when in (4.) sendrecv.
+uid is the unique identifier chosen by the client for which to recognise a single client being connected.
 Connect confirms the estcon process has ended successfully and allows the normal port to be used for
 subsequent network connection.
 Prior to the connect (during (1.2.) keyexchange) the server has made sure there is space (not too many
 connections).
-The server creates a handshake identity and an sr identity which both are sent to the client in full
-integrity.
+The server creates a handshake identity and an send/recieve identity which both are sent to the client in
+full integrity.
 
 2.1. extended handshake
 extended handshake (legitimate)
@@ -241,8 +292,6 @@ extended handshake (invalid)
             nothing
 y|a2+y[ka,kd]
 
-a is an handshake identifier (not unique) for who wants to reconnect, it can only collide if someone else has
-taken this identity due to too long network outage on client but also if the server restarted.
 a2 is the new value (known only to the server and client) to replace the old handshake identity.
 After the extended handshake the server will know the client wants to connect with the same two keys used
 previously as before the network failure, and the client will know the reconnect is successful.

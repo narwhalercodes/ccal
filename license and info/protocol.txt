@@ -31,7 +31,7 @@ m1+m2[k1]|m3[k2] means two concattenated parts, the first being m1 followed by m
                  and the second being m3 encrypted by k2.
 <m1> means m1 with enclosing syntax.
 Example of when enclosing syntax matters:
-<m1|m2>/m3 means m1 or m2 all followed by m3 as opposed to m1|m2/m3 which is two choices for one which is m3.
+<m1/m2>|m3 means m1 or m2 all followed by m3 as opposed to m1/m2|m3 which is two choices for one which is m1.
 <m1+m2[k1]|m3>[k2] is not the same as m1+m2[k1]|m3[k2] because in the latter case only m3 is encrypted by k2.
 
 -----------------------------------------------------------------------------------------------------------

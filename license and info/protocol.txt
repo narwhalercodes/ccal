@@ -195,6 +195,7 @@ k1(k2,kc)
             y[ka]
 y[ka]
 
+n is an all-known message for saying the server is too busy handling the request.
 After the keyexchange the server will know the key k1 produced by the client, and the client will know this.
 If the keyexchange is invalid the server will not know but the effective client will instead be
 the attacking middleman. The real client will try at a later time to estcon.

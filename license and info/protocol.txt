@@ -243,7 +243,8 @@ w+uid1[k1,k4]
 
 w means the server did not like the arguments given.
 k4 is the server generated key given for this specific client (will not change unless the server ).
-uid1 
+uid1 is the client generated unique identifier it whishes to assume.
+un1 is the users username, can be a secret or not.
 The authinit step is only done for clients who have not previously established estcon (aka first-timers).
 After the authinit-step the client will know the key p1 produced by the server, and the server will know this.
 The purpose of this step two things: 1. To establish a more secure connection than a single-sided encryption

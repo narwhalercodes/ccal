@@ -246,7 +246,7 @@ k4 is the server generated key given for this specific client (will not change u
 uid1 is the client generated unique identifier it whishes to assume.
 un1 is the users username, can be a secret or not.
 The authinit step is only done for clients who have not previously established estcon (aka first-timers).
-After the authinit-step the client will know the key p1 produced by the server, and the server will know this.
+After the authinit-step the client will know the key k4 produced by the server, and the server will know this.
 The purpose of this step two things: 1. To establish a more secure connection than a single-sided encryption
 in case one key is less random. 2. To configure an username for the client, un1 (allowed to collide with other
 clients) along with a unique identifier, uid1 (not to be changed unless (1.4.) connect results in failure due

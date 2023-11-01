@@ -217,7 +217,8 @@ Connect confirms the estcon process has ended successfully and allows the normal
 subsequent network connection.
 Prior to the connect (during (1.2.) keyexchange) the server has made sure there is space (not too many
 connections).
-The server creates a handshake identity and an sr identity which both are sent to the client in full integrity.
+The server creates a handshake identity and an sr identity which both are sent to the client in full
+integrity.
 
 2.1. extended handshake
 extended handshake (legitimate)

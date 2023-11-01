@@ -1,0 +1,255 @@
+Protocol
+
+
+How to read this document
+
+
+Processes are a sequence of subprocesses. A subprocess can either be a process itself or a well-described step
+in the protocol.
+Syntax is the syntax used to describe the content of what is sent over the network connection to said actor.
+Actor is either client, server, other client or some middleman part of the network connection.
+
+-----------------------------------------------------------------------------------------------------------
+
+Syntax for content sent
+
+
+Any symbol can start with any letter and contain letters or digits after.
+
+m1 means content with the value defined as below for the given symbol "m1".
+m1|m2 means m1 followed by m2.
+m1/m2 means m1 or m2.
+m1|m2/m3 means two choices: m1 followed by m2 or just m3.
+m1(k1) means m1 encrypted using the key k1 and is using an encryption algorithm decryptable in any order.
+m1(k1,k2) means m1 encrypted using the keys k1, k2 who are using an encryption algorithm decryptable in any order.
+m1[k1] means m1 encrypted using k1.
+m1[k1,k2] means m1 encrypted using k1 then k2.
+m1[k1|k2,k3] means m1 encrypted using k1|k2 then k3.
+m1|m2[k1] means m1 followed by m2 encrypted by k1.
+m1+m2[k1] means m1 followed by m2, both encrypted together by k1.
+m1+m2[k1]|m3[k2] means two concattenated parts, the first being m1 followed by m2 both encrypted together by k1
+                 and the second being m3 encrypted by k2.
+<m1> means m1 with enclosing syntax.
+Example of when enclosing syntax matters:
+<m1|m2>/m3 means m1 or m2 all followed by m3 as opposed to m1|m2/m3 which is two choices for one which is m3.
+<m1+m2[k1]|m3>[k2] is not the same as m1+m2[k1]|m3[k2] because in the latter case only m3 is encrypted by k2.
+
+-----------------------------------------------------------------------------------------------------------
+
+Processes
+
+
+1. estcon (est port)
+    1. handshake
+    2. keyexchange
+    3. authinit
+    4. connect
+
+Estcon is the process of establishing connection to server from client.
+Estcon starts with handshake. The keyexchange and authinit does not happen for non-first-timers. Then a connect
+is signaling completion of estcon.
+
+2. reconnect (normal port)
+    1. extended handshake
+
+Reconnect is the process of reconnecting after short time of network loss.
+
+3. talking (normal port or normal port after estcon)
+    1. estcon
+    2. reconnect
+    3. sendrecv
+
+Talking is the process of the whole client-server communication.
+Talking is starting with either a estcon or a reconnect.
+
+4. sendrecv (normal port)
+    1. sendserver
+    2. recvserver
+
+Sendrecv is the process of communicating with the server, sometimes as an abstraction over communication with
+other clients (for now only usecase for this abstraction is (6.) External Connection).
+Sendrecv is always preceeded with the prior steps described in (3.) talking.
+
+5. Heartbeat (normal port)
+    1. heartbeat
+
+Heartbeat is what the client does when wanting to keep connection with server. This makes it possible to tell
+when they are on a working network connection as well. When a client has connection with the server and has
+properly established estcon/reconnect the client is subject to (6.2.) connection request accept and can initiate
+(6.1.) connection request.
+Heartbeat is sent using (4.) sendrecv.
+
+6. External Connection (normal port)
+    1. connection request
+    2. connection request accept
+
+External Connection begins by requesting p2p communication to a certain other client. If that other client exists
+among the currently connected (to the server) other clients (who has properly established estcon/reconnect) then
+the server starts a connection request accept process with the other client involved as well.
+External Connection does not use p2p network connection, it uses client-server network connection for two
+separate clients.
+
+7. p2p estcon (est port on other client)
+    1. p2p handshake
+    2. p2p keyexchange
+    3. p2p authinit
+    4. p2p connect
+
+The same* interface as for client to server establish connection but the other client is free to refuse p2p
+handshakes if a certain amount of time has passed since the request to connect. *The messages sent also include
+the request number.
+
+8. p2p reconnect (normal port on other client)
+    1. p2p extended handshake
+
+P2p reconnect reconnects to a client after a short network failure without creating a new connection request.
+
+9. p2p talking (normal port on other client or normal port on other client after p2p estcon)
+    1. p2p estcon
+    2. p2p reconnect
+    3. sendrecvclient
+
+P2p talking is the process of talking to another client.
+P2p talking is starting with either a p2p estcon or a p2p reconnect.
+
+10. sendrecvclient (normal port on other client)
+    1. sendclient
+    2. recvclient
+
+Sendrecvclient is the process of communicating with another client, this is where the magic happens.
+All of your data transfers belong to (10.) sendrecvclient (for now at least).
+
+-----------------------------------------------------------------------------------------------------------
+
+Well-described step of protocol
+
+
+Actor
+client
+           |attacker or legitimate middleman
+           |           |server
+           |           |           |attacker or legitimate middleman
+           |           |           |           |other client
+           |           |           |           |
+
+1.1. handshake
+
+handshake (legitimate)
+sender
+            h/h+H2
+                        h/h+H2
+            y
+y
+
+handshake (legitimate failure)
+sender
+            h/h+H2
+                        h/h+H2
+
+handshake (invalid)
+sender
+            h/h+H2
+y
+
+h is an off-shore all-known message for saying hello.
+h can change over time at the disgression of the server administrator.
+h can be cashed locally by any actor in case the off-shore actor is having issues.
+H2 means the client thinks it needs no keyexchange.
+y is a all-known message for saying you still wish to not block the network socket.
+After the handshake the server and client will know that a keyexchange/connect/reconnect should take place next.
+If handshake is invalid the server will not know about the attack but will just not continue with responses for
+keyexchange/connect.
+The client will realise it was invalid once they do not get a response for keyexchange/connect. The client will
+have to estcon at a later time.
+If the server is too busy processing keyexchanges the handshake can be ignored and server simply closes socket.
+The server does always respond on h+H2 unless extreme scenarios of message bombing.
+
+1.2. keyexchange
+
+keyexchange (legitimate)
+sender
+            k1(k2)
+                        k1(k2)
+            k1(k2,k3)
+k1(k2,k3)
+            k1(k3)
+                        k1(k3)
+            y[k1]
+y[k1]
+
+keyexchange (legitimate failure)
+sender
+            k1(k2)
+                        k1(k2)
+            n
+n
+
+keyexchange (invalid)
+sender
+            k1(k2)
+                        ka(kb)
+            ka(kb,k3)
+k1(k2,kc)
+            k1(kc)
+                        ka(k3)
+            y[ka]
+y[ka]
+
+After the keyexchange the server will know the key k1 produced by the client, and the client will know this.
+If the keyexchange is invalid the server will not know but the effective client will instead be
+the attacking middleman. The real client will try at a later time to estcon.
+
+1.3. authinit
+
+[IDK WHAT THIS IS GONNA BE]
+
+The authinit step is only done for clients who have not previously established estcon (aka first-timers).
+After the authinit-step the client will know the key p1 produced by the server, and the server will know this.
+The purpose of this step is to establish a more secure connection than a single-sided encryption in case one key
+is less random.
+
+1.4. connect
+
+[IDK WHAT THIS IS GONNA BE]
+
+Connect confirms the estcon process has ended successfully and allows the normal port to be used for
+subsequent network connection.
+Prior to the connect (during (1.2.) keyexchange) the server has made sure there is space (not too many
+connections).
+The server creates a handshake identity and an sr identity which both are sent to the 
+
+2.1. extended handshake
+extended handshake (legitimate)
+sender
+            h|a|a[k1,k4]
+                        h|a|a[k1,k4]
+            y|a2+y[k1,k4]
+y|a2+y[k1,k4]
+            y
+                        y
+
+extended handshake (legitimate failure)
+sender
+            h|a|a[k1,k4]
+                        h|a|a[k1,k4]
+
+extended handshake (invalid)
+            sender
+                        h|a|a[ka,kd]
+            nothing
+y|a2+y[ka,kd]
+
+a is an handshake identifier (not unique) for who wants to reconnect, it can only collide if someone else has
+taken this identity due to too long network outage on client but also if the server restarted.
+a2 is the new value (known only to the server and client) to replace the old handshake identity.
+After the extended handshake the server will know the client wants to connect with the same two keys used
+previously as before the network failure, and the client will know the reconnect is successful.
+If reconnect is not possible the server will close socket.
+If message is sent to server and reconnect is possible it will always be answered, unless extreme message
+bombing in which case the server will close the socket too.
+If some middleman tries to attack the interaction both the server and the client will realise. The server will
+realise imediately if the identity is currently connected. The server will realise after decryption if the
+connection was actually subject to network outage recently.
+If there are problems delivering the client response (y) the handshake identity is lost.
+
+[Rest of the protocol to be written...]
